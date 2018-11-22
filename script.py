@@ -34,9 +34,10 @@ issues_filtered = list(filter(lambda x: x.assignee is not None and
                        issues))
 
 time_spent = sum(issue.time_stats['total_time_spent'] for issue in issues_filtered)
-# total_weight = sum(issue.weight for issue in issues_filtered)
+time_estimate = sum(issue.time_stats['time_estimate'] for issue in issues_filtered)
 
 print('User: ' + assignee)
 print('Period: From {} to {}'.format(start_date, end_date))
-print('Tasks completed:' + str(len(issues_filtered)))
+print('Total issues:' + str(len(issues_filtered)))
 print('Time spent in hours: ' + str(datetime.timedelta(seconds=time_spent)))
+print('Time estimated in hours: ' + str(datetime.timedelta(seconds=time_estimate)))
