@@ -22,15 +22,13 @@ gl = gitlab.Gitlab(url, private_token, api_version=4, session=session)
 issues = gl.issues.list()
 
 tasks = list(filter(lambda x: x.assignee['username'] == assignee and
-                                 x.labels.__contains__(label) and
-                                 date_start < datetime.datetime.strptime(x.updated_at, "%Y-%m-%dT%H:%M:%S.%fZ") < date_end,
+                           x.labels.__contains__(label) and
+                           date_start < datetime.datetime.strptime(x.updated_at, "%Y-%m-%dT%H:%M:%S.%fZ") < date_end,
                        issues))
 
-sum_estimated = 0
-for issue in tasks:
-    sum_estimated += issue.time_stats['total_time_spent']
+time_spent = sum(task.time_stats['total_time_spent'] for task in tasks)
 
 print('User: ' + assignee)
-print('Period: From {} to {}'.format(date_start, date_end) )
+print('Period: From {} to {}'.format(date_start, date_end))
 print('Tasks completed:' + str(len(tasks)))
-print('Time spent in hours: ' + str(datetime.timedelta(seconds=sum_estimated)))
+print('Time spent in hours: ' + str(datetime.timedelta(seconds=time_spent)))
