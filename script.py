@@ -18,10 +18,6 @@ label = os.getenv('GQ_LABEL')
 start_date = dateutil.parser.parse(os.getenv('GQ_START_DATE'))
 end_date = dateutil.parser.parse(os.getenv('GQ_END_DATE'))
 
-# TODO: get by env vars
-# date_start = datetime.datetime(2018, 10, 1)
-# date_end = datetime.datetime(2018, 12, 1)
-
 gl = gitlab.Gitlab(url, private_token, api_version=4, session=session)
 issues = gl.issues.list()
 
