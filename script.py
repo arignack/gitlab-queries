@@ -1,18 +1,20 @@
 import gitlab
 import datetime
 import requests
+import os
 
 session = requests.Session()
-# session.proxies = {
-#     'https': 'http://localhost:8123',
-#     'http': 'http://localhost:8123',
-# }
+if os.getenv('GQ_PROXY_HTTP'):
+    session.proxies = {
+        'https': os.getenv('GQ_PROXY_HTTPS'),
+        'http': os.getenv('GQ_PROXY_HTTP'),
+    }
 
-url = 'http://localhost:381'
-# private_token = 'H74t_h4NczxRbxaQsauH' # gitlab.com
-private_token = 'wz1uCSEVzb6vfyVxRqxm'  # gitlab.docker
-assignee = 'root'
-label = 'To Do'
+private_token = os.getenv('GQ_PRIVATE_TOKEN')
+url = os.getenv('GQ_URL')
+assignee = os.getenv('GQ_ASSIGNEE')
+label = os.getenv('GQ_LABEL')
+
 date_start = datetime.datetime(2018, 10, 1)
 date_end = datetime.datetime(2018, 12, 1)
 
@@ -21,8 +23,7 @@ issues = gl.issues.list()
 
 issues_filter = filter(lambda x: x.assignee['username'] == assignee and
                                  x.labels.__contains__(label) and
-                                 date_start < datetime.datetime.strptime(x.updated_at,
-                                                                         "%Y-%m-%dT%H:%M:%S.%fZ") < date_end,
+                                 date_start < datetime.datetime.strptime(x.updated_at, "%Y-%m-%dT%H:%M:%S.%fZ") < date_end,
                        issues)
 tasks = list(issues_filter)
 
@@ -31,5 +32,5 @@ for issue in tasks:
     sum_estimated += issue.time_stats['total_time_spent']
 
 print('User: ' + assignee)
-print('Total tasks:' + str(len(tasks)))
+print('Tasks completed:' + str(len(tasks)))
 print('Time spent: ' + str(datetime.timedelta(seconds=sum_estimated)))
