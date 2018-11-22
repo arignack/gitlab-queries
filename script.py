@@ -32,5 +32,6 @@ for issue in tasks:
     sum_estimated += issue.time_stats['total_time_spent']
 
 print('User: ' + assignee)
+print('Period: From {} to {}'.format(date_start, date_end) )
 print('Tasks completed:' + str(len(tasks)))
 print('Time spent: ' + str(datetime.timedelta(seconds=sum_estimated)))
