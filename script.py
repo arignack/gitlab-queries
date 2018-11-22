@@ -1,20 +1,30 @@
 import gitlab
 import datetime
+import requests
 
-gl = gitlab.Gitlab('http://gitlab.cu.aleph.engineering', private_token='3WoyUjDo_HiSzrx4EX8n')
+session = requests.Session()
+# session.proxies = {
+#     'https': 'http://localhost:8123',
+#     'http': 'http://localhost:8123',
+# }
 
-assignee = 'alian'
-labels = ['Done']
-date_start = datetime.datetime(2018, 11, 1)
+url = 'http://localhost:381'
+# private_token = 'H74t_h4NczxRbxaQsauH' # gitlab.com
+private_token = 'wz1uCSEVzb6vfyVxRqxm'  # gitlab.docker
+assignee = 'root'
+label = 'To Do'
+date_start = datetime.datetime(2018, 10, 1)
 date_end = datetime.datetime(2018, 12, 1)
 
-issues = gl.issues.list(labels=labels)
+gl = gitlab.Gitlab(url, private_token, api_version=4, session=session)
+issues = gl.issues.list()
 
-list_filter = filter(lambda x: x.assignee['username'] == assignee and
-                               x.labels == labels and
-                               date_start < datetime.datetime.strptime(x.updated_at, "%Y-%m-%dT%H:%M:%S.%fZ") < date_end,
-                     issues)
-tasks = list(list_filter)
+issues_filter = filter(lambda x: x.assignee['username'] == assignee and
+                                 x.labels.__contains__(label) and
+                                 date_start < datetime.datetime.strptime(x.updated_at,
+                                                                         "%Y-%m-%dT%H:%M:%S.%fZ") < date_end,
+                       issues)
+tasks = list(issues_filter)
 
 sum_estimated = 0
 for issue in tasks:
